@@ -26,4 +26,12 @@ jobs:
           pip install pytest pytest-benchmark
 
       - name: Test
-        run: pytest test_orjson_dumps.py
+        run: pytest test_orjson_dumps.py > sample.txt
+
+      - name: Report
+        run: |
+          set +e
+          echo "## ORJSON ${{ matrix.orjson-version }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat sample.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
