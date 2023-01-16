@@ -29,10 +29,29 @@ jobs:
       - name: Test
         run: pytest test_orjson_dumps.py --memray > sample.txt
 
-      - name: Report
+      - name: Write Summary
         run: |
           set +e
-          echo "## ORJSON ${{ matrix.orjson-version }} Py ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat sample.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "## ORJSON ${{ matrix.orjson-version }} Py ${{ matrix.python-version }}" >> orjson_${{ matrix.orjson-version }}_py_${{ matrix.python-version }}.md
+          echo '```' >> orjson_${{ matrix.orjson-version }}_py_${{ matrix.python-version }}.md
+          cat sample.txt >> orjson_${{ matrix.orjson-version }}_py_${{ matrix.python-version }}.md
+          echo '```' >> orjson_${{ matrix.orjson-version }}_py_${{ matrix.python-version }}.md
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: "pytest_res"
+          path: orjson_${{ matrix.orjson-version }}_py_${{ matrix.python-version }}.md
+
+  summary:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: "pytest_res"
+          path: ""
+
+      - name: Summary
+        run: cat orjson*.md > $GITHUB_STEP_SUMMARY
