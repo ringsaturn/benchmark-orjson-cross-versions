@@ -24,10 +24,10 @@ jobs:
       - name: Install
         run: |
           pip install orjson==${{ matrix.orjson-version }}
-          pip install pytest pytest-benchmark
+          pip install pytest pytest-benchmark pytest-memray
 
       - name: Test
-        run: pytest test_orjson_dumps.py > sample.txt
+        run: pytest test_orjson_dumps.py --memray > sample.txt
 
       - name: Report
         run: |
